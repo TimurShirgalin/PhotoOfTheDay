@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">Photo of the day</string>
+    <string name="photo_of_the_day_disc">photo_of_the_day_disc</string>
+    <string name="input_hint">Введите запрос</string>
+    <string name="helper_text">Поиск в Википедии</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="chip_text_yesterday">Вчера</string>
+    <string name="chip_text_today">Сегодня</string>
+    <string name="chip_text_dayBeforeYesterday">Позавчера</string>
+    <string name="menu_title_favorite">Favorite</string>
+    <string name="menu_title_settings">Settings</string>
+    <string name="menu_title_view1">На экран 1</string>
+    <string name="menu_title_view2">На экран 2</string>
+    <string name="menu_title_search">Search</string>
 </resources>

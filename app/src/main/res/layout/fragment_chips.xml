@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    android:orientation="horizontal">
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/chip_today"
+        style="@style/Widget.MaterialComponents.Chip.Action"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/chip_text_today"
+        app:layout_constraintEnd_toStartOf="@id/chip_yesterday"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/chip_yesterday"
+        style="@style/Widget.MaterialComponents.Chip.Action"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/chip_text_yesterday"
+        app:layout_constraintEnd_toStartOf="@id/chip_dayBeforeYesterday"
+        app:layout_constraintStart_toEndOf="@id/chip_today"
+        app:layout_constraintTop_toTopOf="@id/chip_today" />
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/chip_dayBeforeYesterday"
+        style="@style/Widget.MaterialComponents.Chip.Action"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/chip_text_dayBeforeYesterday"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/chip_yesterday"
+        app:layout_constraintTop_toTopOf="@id/chip_today" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

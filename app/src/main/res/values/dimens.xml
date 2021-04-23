@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="padding">5dp</dimen>
+    <dimen name="peak_height_120">120dp</dimen>
+    <dimen name="width_25">25dp</dimen>
+    <dimen name="height_1">1dp</dimen>
+    <dimen name="padding_10">10dp</dimen>
+    <dimen name="margin_8">8dp</dimen>
+    <dimen name="width_0">0dp</dimen>
+    <dimen name="corner_radius">20dp</dimen>
+</resources>
