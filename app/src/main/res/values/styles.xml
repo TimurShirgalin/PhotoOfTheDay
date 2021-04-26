@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="counterEnabled">true</item>
+        <item name="android:layout_width">@dimen/width_0</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="endIconCheckable">true</item>
+        <item name="endIconTintMode">src_atop</item>
+        <item name="counterMaxLength">20</item>
+        <item name="android:hint">@string/input_hint</item>
+        <item name="endIconMode">custom</item>
+        <item name="endIconDrawable">@drawable/ic_wikipedia</item>
+        <item name="helperText">@string/helper_text</item>
+    </style>
+
+    <style name="CustomShapeAppearance.SmallComponent" parent="ShapeAppearance.MaterialComponents.SmallComponent">
+        <item name="cornerFamilyBottomRight">cut</item>
+        <item name="cornerSize">18dp</item>
+    </style>
+
+    <style name="CustomShapeAppearanceFloat">
+        <item name="cornerFamilyBottomRight">rounded</item>
+    </style>
+
+    <style name="CustomChips" parent="Widget.MaterialComponents.Chip.Choice">
+        <item name="android:backgroundTint">@color/chips_colors</item>
+        <item name="chipSurfaceColor">@color/white</item>
+        <item name="rippleColor">?attr/colorPrimaryVariant</item>
+    </style>
+
+    <style name="CustomEquilateralImageView">
+        <item name="android:fillColor">?attr/colorOnPrimary</item>
+    </style>
+
+    <style name="Theme.Cosmic" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/green_cosmic</item>
+        <item name="colorPrimaryVariant">@color/blue</item>
+        <item name="colorOnPrimary">@color/black</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/teal_200</item>
+        <item name="colorSecondaryVariant">@color/teal_200</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <!-- Customize your theme here. -->
+        <item name="shapeAppearanceSmallComponent">@style/CustomShapeAppearance.SmallComponent
+        </item>
+        <item name="dialogBackground">@color/background_light</item>
+        <item name="background_bottomSheet">@color/darkGrey</item>
+        <item name="background_image">@drawable/background</item>
+        <item name="android:colorBackground">@color/black</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="colorOnSurface">@color/white</item>
+    </style>
+</resources>
