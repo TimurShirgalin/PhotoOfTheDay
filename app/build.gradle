@@ -27,6 +27,13 @@ android {
         }
     }
 
+    buildTypes.each {
+        Properties properties = new Properties()
+        properties.load(project.rootProject.file("apikey.properties").newDataInputStream())
+        def apiKey  = properties.getProperty("nasa_apikey", "")
+        it.buildConfigField "String", "NASA_APIKEY", apiKey
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -58,5 +65,5 @@ dependencies {
 
     implementation("io.coil-kt:coil:1.1.1")
 
-
+    compile files('libs/YouTubeAndroidPlayerApi.jar')
 }

@@ -8,18 +8,14 @@
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/teal_200</item>
         <item name="colorSecondaryVariant">@color/teal_200</item>
-        <item name="colorOnSecondary">@color/black</item>
+        <item name="colorOnSecondary">@color/white</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+        <item name="shapeAppearanceSmallComponent">@style/CustomShapeAppearance.SmallComponent
+        </item>
+        <item name="dialogBackground">@color/background_light</item>
+        <item name="background_bottomSheet">@color/darkGrey</item>
+        <item name="background_image">@color/black</item>
     </style>
-
-    <style name="ConstraintLayoutStyle">
-        <item name="android:background">@color/darkGrey</item>
-    </style>
-
-    <style name="ViewStyle">
-        <item name="android:background">@color/white</item>
-    </style>
-
 </resources>

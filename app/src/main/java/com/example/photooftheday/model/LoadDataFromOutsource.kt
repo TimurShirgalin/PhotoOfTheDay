@@ -1,14 +1,14 @@
 package com.example.photooftheday.model
 
 import androidx.lifecycle.MutableLiveData
-import com.example.photooftheday.viewModel.AppState
+import com.example.photooftheday.BuildConfig
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-const val NASA_API_KEY = "7SJTsiHPT62aHqktdd1Kzz933dmoJMK1EzfLwp3S"
 
 class LoadDataFromOutsource {
+    private val NASA_API_KEY = BuildConfig.NASA_APIKEY
     private val retrofitImpl: PODRetrofitImpl = PODRetrofitImpl()
 
     fun sendServerRequest(date: String, liveDataForViewToObserve: MutableLiveData<AppState>) {

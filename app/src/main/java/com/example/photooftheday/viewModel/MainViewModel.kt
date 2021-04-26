@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.photooftheday.model.AppState
 import com.example.photooftheday.model.LoadDataFromOutsource
 import java.text.SimpleDateFormat
 import java.util.*

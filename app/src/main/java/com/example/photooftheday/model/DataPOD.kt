@@ -7,7 +7,8 @@ import kotlinx.parcelize.Parcelize
 data class DataPOD(
     val date: String?,
     val explanation: String?,
-    val mediaType: String?,
+    val media_type: String?,
     val title: String?,
     val url: String?,
+    val code: String?
 ) : Parcelable

@@ -1,6 +1,4 @@
-package com.example.photooftheday.viewModel
-
-import com.example.photooftheday.model.DataPOD
+package com.example.photooftheday.model
 
 sealed class AppState {
     data class Success(val serverResponseData: DataPOD) : AppState()
