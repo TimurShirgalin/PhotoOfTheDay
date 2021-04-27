@@ -23,6 +23,7 @@ import com.example.photooftheday.databinding.MainFragmentBinding
 import com.example.photooftheday.ui.media.ImageFragment
 import com.example.photooftheday.ui.media.VideoFragment
 import com.example.photooftheday.model.AppState
+import com.example.photooftheday.ui.secondary.ApiActivity
 import com.example.photooftheday.viewModel.MainViewModel
 import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -51,7 +52,7 @@ class MainFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        sharedPref = SharedPref(activity!!)
+        sharedPref = SharedPref(requireActivity())
         if (sharedPref.getSharedPref(THEME) != 1) {
             sharedPref.setSharedPref(
                 THEME, resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
@@ -96,9 +97,9 @@ class MainFragment : Fragment() {
                     imageDescriptionHeaderText = serverResponseData.title
                     imageDescriptionText = serverResponseData.explanation
                     val imageDescription: TextView =
-                        activity!!.findViewById(R.id.bottom_sheet_description)
+                        requireActivity().findViewById(R.id.bottom_sheet_description)
                     val imageDescriptionHeader: TextView =
-                        activity!!.findViewById(R.id.bottom_sheet_description_header)
+                        requireActivity().findViewById(R.id.bottom_sheet_description_header)
                     imageDescriptionHeader.text = imageDescriptionHeaderText
                     if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_COLLAPSED) {
                         imageDescription.alpha = 0f
@@ -108,14 +109,14 @@ class MainFragment : Fragment() {
                         "image" -> {
                             val bundle = Bundle()
                             bundle.putParcelable(ImageFragment.KEY, data.serverResponseData)
-                            activity!!.supportFragmentManager.beginTransaction()
+                            requireActivity().supportFragmentManager.beginTransaction()
                                 .replace(R.id.media_container, ImageFragment.newInstance(bundle))
                                 .commitNow()
                         }
                         "video" -> {
                             val bundle = Bundle()
                             bundle.putParcelable(VideoFragment.KEY_V, data.serverResponseData)
-                            activity!!.supportFragmentManager.beginTransaction()
+                            requireActivity().supportFragmentManager.beginTransaction()
                                 .replace(R.id.media_container, VideoFragment.newInstance(bundle))
                                 .commitNow()
                         }
@@ -129,7 +130,7 @@ class MainFragment : Fragment() {
                 binding.loadingLayout.visibility = View.GONE
                 val bundle = Bundle()
                 bundle.putString(ImageFragment.KEY, "dataError")
-                activity!!.supportFragmentManager.beginTransaction()
+                requireActivity().supportFragmentManager.beginTransaction()
                     .replace(R.id.media_container, ImageFragment.newInstance(bundle))
                     .commitNow()
             }
@@ -140,7 +141,7 @@ class MainFragment : Fragment() {
     private fun setBottomSheet(bottomSheet: ConstraintLayout) {
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-        val imageDescription: TextView = activity!!.findViewById(R.id.bottom_sheet_description)
+        val imageDescription: TextView = requireActivity().findViewById(R.id.bottom_sheet_description)
         bottomSheetBehavior.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
@@ -181,7 +182,7 @@ class MainFragment : Fragment() {
     @SuppressLint("CommitPrefEdits")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.app_bar_fav -> Toast.makeText(context, "Favorite", Toast.LENGTH_SHORT).show()
+            R.id.app_bar_fav -> activity?.let { startActivity(Intent(it, ApiActivity::class.java))}
             R.id.app_bar_settings -> {
                 val list = arrayOf("Светлая тема", "Темная тема", "Черно-синяя тема")
                 val builder = AlertDialog.Builder(context)
@@ -197,11 +198,11 @@ class MainFragment : Fragment() {
                                 sharedPref.setSharedPref(THEME, 32)
                             }
                             2 -> {
-                                context!!.setTheme(R.style.Theme_Cosmic)
+                                requireContext().setTheme(R.style.Theme_Cosmic)
                                 sharedPref.setSharedPref(THEME, 1)
                             }
                         }
-                        recreate(activity!!)
+                        recreate(requireActivity())
                     }
                 val dialog = builder.create()
                 dialog.window?.setBackgroundDrawableResource(R.drawable.dialog_shape)
