@@ -1,4 +1,4 @@
-package com.example.photooftheday.model
+package com.example.photooftheday.model.pod
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
@@ -10,5 +10,6 @@ data class DataPOD(
     val media_type: String?,
     val title: String?,
     val url: String?,
+    val hdurl: String?,
     val code: String?
 ) : Parcelable
