@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="dialogBackground" format="reference" />
+    <attr name="background_bottomSheet" format="reference" />
+    <attr name="background_image" format="reference" />
+    <attr name="hd_icon_color" format="reference" />
+</resources>
