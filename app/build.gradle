@@ -30,7 +30,7 @@ android {
     buildTypes.each {
         Properties properties = new Properties()
         properties.load(project.rootProject.file("apikey.properties").newDataInputStream())
-        def apiKey  = properties.getProperty("nasa_apikey", "")
+        def apiKey = properties.getProperty("nasa_apikey", "")
         it.buildConfigField "String", "NASA_APIKEY", apiKey
     }
 
@@ -66,8 +66,6 @@ dependencies {
 
     implementation("io.coil-kt:coil:1.1.1")
 
-    compile files('libs/YouTubeAndroidPlayerApi.jar')
-    compileOnly 'com.google.android.wearable:wearable:2.8.1'
-
     implementation "androidx.viewpager2:viewpager2:1.1.0-alpha01"
+    compile files('libs/YouTubeAndroidPlayerApi.jar')
 }

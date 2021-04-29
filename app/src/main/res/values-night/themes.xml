@@ -17,5 +17,6 @@
         <item name="dialogBackground">@color/background_light</item>
         <item name="background_bottomSheet">@color/darkGrey</item>
         <item name="background_image">@color/black</item>
+        <item name="hd_icon_color">@color/white</item>
     </style>
 </resources>

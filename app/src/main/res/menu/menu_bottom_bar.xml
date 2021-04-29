@@ -2,12 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/app_bar_fav"
-        android:title="@string/menu_title_favorite"
+        android:id="@+id/app_bar_hd"
+        android:icon="@drawable/ic_hd"
+        android:title="@string/menu_title_hd"
         app:showAsAction="ifRoom" />
-
     <item
         android:id="@+id/app_bar_settings"
+        android:icon="@drawable/ic_settings"
         android:title="@string/menu_title_settings"
         app:showAsAction="ifRoom" />
 </menu>

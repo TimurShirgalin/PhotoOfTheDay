@@ -14,17 +14,14 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat.recreate
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
-import com.example.photooftheday.DAY
-import com.example.photooftheday.THEME
-import com.example.photooftheday.R
-import com.example.photooftheday.SharedPref
+import coil.load
+import com.example.photooftheday.*
 import com.example.photooftheday.databinding.MainFragmentBinding
-import com.example.photooftheday.ui.media.ImageFragment
-import com.example.photooftheday.ui.media.VideoFragment
-import com.example.photooftheday.model.AppState
-import com.example.photooftheday.ui.secondary.ApiActivity
-import com.example.photooftheday.viewModel.MainViewModel
+import com.example.photooftheday.model.pod.AppStatePOD
+import com.example.photooftheday.ui.secondary.FavoriteFragment
+import com.example.photooftheday.viewModel.ViewModelPOD
 import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.chip.Chip
@@ -33,18 +30,15 @@ import com.google.android.material.chip.Chip
 class MainFragment : Fragment() {
     private var _binding: MainFragmentBinding? = null
     private val binding get() = _binding!!
-    private var imageDescriptionHeaderText: String? = null
-    private var imageDescriptionText: String? = null
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>
-    private val viewModel: MainViewModel by lazy {
-        ViewModelProvider(this).get(MainViewModel::class.java)
+    private val viewModelPOD: ViewModelPOD by lazy {
+        ViewModelProvider(this).get(ViewModelPOD::class.java)
     }
     private lateinit var sharedPref: SharedPref
     private lateinit var chips: List<Chip>
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?,
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?,
     ): View {
         _binding = MainFragmentBinding.inflate(inflater, container, false)
         return binding.root
@@ -59,22 +53,21 @@ class MainFragment : Fragment() {
             )
         }
         if (savedInstanceState == null) {
+            sharedPref.setSharedPref(HD, 0)
             sharedPref.setSharedPref(DAY, 0)
         }
-        chips = listOf(
-            binding.chipsLayout.chipToday,
-            binding.chipsLayout.chipYesterday,
-            binding.chipsLayout.chipDayBeforeYesterday
-        )
+        binding.chipsLayout.let {
+            chips = listOf(it.chipToday, it.chipYesterday, it.chipDayBeforeYesterday)
+        }
         setOnClickListenersForChips()
-        viewModel.getData(sharedPref.getSharedPref(DAY))
+        viewModelPOD.getData(sharedPref.getSharedPref(DAY))
             .observe(viewLifecycleOwner, { renderData(it) })
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setBottomAppBar(view)
         setBottomSheet(view.findViewById(R.id.bottom_sheet_container))
+        setBottomAppBar(view)
         binding.inputLayout.setEndIconOnClickListener {
             startActivity(Intent(Intent.ACTION_VIEW).apply {
                 data =
@@ -83,80 +76,92 @@ class MainFragment : Fragment() {
         }
     }
 
-    private fun renderData(data: AppState) {
+    @SuppressLint("SetJavaScriptEnabled")
+    private fun renderData(data: AppStatePOD) {
         chipsCheck(sharedPref.getSharedPref(DAY))
         when (data) {
-            is AppState.Success -> {
+            is AppStatePOD.Success -> {
                 binding.loadingLayout.visibility = View.GONE
 
                 val serverResponseData = data.serverResponseData
-                val url = serverResponseData.url
-                if (url.isNullOrEmpty()) {
+                val url: String =
+                    if (sharedPref.getSharedPref(HD) == 1 && data.serverResponseData.media_type == "image") {
+                        serverResponseData.hdurl.toString()
+                    } else {
+                        serverResponseData.url.toString()
+                    }
+                if (url.isEmpty()) {
                     Toast.makeText(context, "ссылка пустая!", Toast.LENGTH_LONG).show()
                 } else {
-                    imageDescriptionHeaderText = serverResponseData.title
-                    imageDescriptionText = serverResponseData.explanation
                     val imageDescription: TextView =
                         requireActivity().findViewById(R.id.bottom_sheet_description)
                     val imageDescriptionHeader: TextView =
                         requireActivity().findViewById(R.id.bottom_sheet_description_header)
-                    imageDescriptionHeader.text = imageDescriptionHeaderText
+                    imageDescriptionHeader.text = serverResponseData.title
                     if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_COLLAPSED) {
                         imageDescription.alpha = 0f
                     }
-                    imageDescription.text = imageDescriptionText
+                    imageDescription.text = serverResponseData.explanation
                     when (serverResponseData.media_type) {
                         "image" -> {
-                            val bundle = Bundle()
-                            bundle.putParcelable(ImageFragment.KEY, data.serverResponseData)
-                            requireActivity().supportFragmentManager.beginTransaction()
-                                .replace(R.id.media_container, ImageFragment.newInstance(bundle))
-                                .commitNow()
+                            binding.mediaLayout.apply {
+                                webView.visibility = View.GONE
+                                webView.onPause()
+                                imageView.visibility = View.VISIBLE
+                                imageView.load(url) {
+                                    lifecycle(this@MainFragment)
+                                    error(R.drawable.ic_error)
+                                }
+                            }
                         }
                         "video" -> {
-                            val bundle = Bundle()
-                            bundle.putParcelable(VideoFragment.KEY_V, data.serverResponseData)
-                            requireActivity().supportFragmentManager.beginTransaction()
-                                .replace(R.id.media_container, VideoFragment.newInstance(bundle))
-                                .commitNow()
+                            binding.mediaLayout.imageView.visibility = View.GONE
+                            binding.mediaLayout.webView.apply {
+                                visibility = View.VISIBLE
+                                settings.javaScriptEnabled = true
+                                loadUrl(url.toString())
+                                onResume()
+                            }
                         }
                     }
                 }
             }
-            is AppState.Loading -> {
+            is AppStatePOD.Loading -> {
                 binding.loadingLayout.visibility = View.VISIBLE
             }
-            is AppState.Error -> {
+            is AppStatePOD.Error -> {
                 binding.loadingLayout.visibility = View.GONE
-                val bundle = Bundle()
-                bundle.putString(ImageFragment.KEY, "dataError")
-                requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.media_container, ImageFragment.newInstance(bundle))
-                    .commitNow()
+                binding.mediaLayout.apply {
+                    webView.visibility = View.GONE
+                    imageView.visibility = View.VISIBLE
+                    imageView.setImageResource(R.drawable.ic_error)
+                }
             }
         }
     }
 
     @SuppressLint("SimpleDateFormat", "ResourceType")
     private fun setBottomSheet(bottomSheet: ConstraintLayout) {
-        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-        val imageDescription: TextView = requireActivity().findViewById(R.id.bottom_sheet_description)
-        bottomSheetBehavior.addBottomSheetCallback(object :
-            BottomSheetBehavior.BottomSheetCallback() {
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
-            }
+        val imageDescription: TextView =
+            requireActivity().findViewById(R.id.bottom_sheet_description)
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet).apply {
+            state = BottomSheetBehavior.STATE_COLLAPSED
+            addBottomSheetCallback(object :
+                BottomSheetBehavior.BottomSheetCallback() {
+                override fun onStateChanged(bottomSheet: View, newState: Int) {
+                }
 
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                imageDescription.animate().alpha(slideOffset).setDuration(0).start()
-            }
-        })
+                override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                    imageDescription.animate().alpha(slideOffset).setDuration(0).start()
+                }
+            })
+        }
     }
 
     private fun setOnClickListenersForChips() {
         for (i in chips.indices) {
             chips[i].setOnClickListener {
-                viewModel.getData(i)
+                viewModelPOD.getData(i)
                 sharedPref.setSharedPref(DAY, i)
                 chipsCheck(i)
             }
@@ -177,38 +182,50 @@ class MainFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.menu_bottom_bar, menu)
+        if (sharedPref.getSharedPref(HD) == 1) {
+            menu.findItem(R.id.app_bar_hd).setIcon(R.drawable.ic_hd_colored)
+        }
     }
 
     @SuppressLint("CommitPrefEdits")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.app_bar_fav -> activity?.let { startActivity(Intent(it, ApiActivity::class.java))}
             R.id.app_bar_settings -> {
                 val list = arrayOf("Светлая тема", "Темная тема", "Черно-синяя тема")
                 val builder = AlertDialog.Builder(context)
-                builder.setTitle("Тема приложения")
-                    .setItems(list) { _, which ->
-                        when (which) {
-                            0 -> {
-                                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                                sharedPref.setSharedPref(THEME, 16)
-                            }
-                            1 -> {
-                                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                                sharedPref.setSharedPref(THEME, 32)
-                            }
-                            2 -> {
-                                requireContext().setTheme(R.style.Theme_Cosmic)
-                                sharedPref.setSharedPref(THEME, 1)
-                            }
+                builder.setTitle("Тема приложения").setItems(list) { _, which ->
+                    when (which) {
+                        0 -> {
+                            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                            sharedPref.setSharedPref(THEME, 16)
                         }
-                        recreate(requireActivity())
+                        1 -> {
+                            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                            sharedPref.setSharedPref(THEME, 32)
+                        }
+                        2 -> {
+                            requireContext().setTheme(R.style.Theme_Cosmic)
+                            sharedPref.setSharedPref(THEME, 1)
+                        }
                     }
-                val dialog = builder.create()
-                dialog.window?.setBackgroundDrawableResource(R.drawable.dialog_shape)
-                dialog.show()
+                    recreate(requireActivity())
+                }
+                builder.create().apply {
+                    window?.setBackgroundDrawableResource(R.drawable.dialog_shape)
+                    show()
+                }
             }
-            android.R.id.home -> {
+            R.id.app_bar_hd -> {
+                if (sharedPref.getSharedPref(HD) == 0) {
+                    item.setIcon(R.drawable.ic_hd_colored)
+                    sharedPref.setSharedPref(HD, 1)
+                } else {
+                    item.setIcon(R.drawable.ic_hd)
+                    sharedPref.setSharedPref(HD, 0)
+                }
+                viewModelPOD.getData(sharedPref.getSharedPref(DAY))
+            }
+            R.id.home -> {
                 activity?.let {
                     BottomSheetDialogFragment().show(it.supportFragmentManager, "tag")
                 }
@@ -221,29 +238,48 @@ class MainFragment : Fragment() {
         val context = activity as MainActivity
         context.setSupportActionBar(view.findViewById(R.id.bottom_appBar))
         setHasOptionsMenu(true)
+        if (!isMain) {
+            setSettingsForBottom(context)
+        }
         binding.fab.setOnClickListener {
             if (isMain) {
                 isMain = false
-                binding.bottomAppBar.also {
-                    it.navigationIcon = null
-                    it.fabAlignmentMode = BottomAppBar.FAB_ALIGNMENT_MODE_END
-                    binding.fab.setImageDrawable(
-                        ContextCompat.getDrawable(context, R.drawable.ic_back)
-                    )
-                    it.replaceMenu(R.menu.menu_search)
+                setSettingsForBottom(context)
+                binding.bottomAppBar.apply {
+                    fabAlignmentMode = BottomAppBar.FAB_ALIGNMENT_MODE_END
+                    menu.findItem(R.id.app_bar_hd).isVisible = false
                 }
+                requireActivity().supportFragmentManager.beginTransaction()
+                    .replace(R.id.container_favorite, FavoriteFragment.newInstance(), "favorite")
+                    .addToBackStack("favorite")
+                    .commit()
             } else {
                 isMain = true
-                binding.bottomAppBar.also {
-                    it.navigationIcon = ContextCompat.getDrawable(context, R.drawable.ic_menu)
-                    it.fabAlignmentMode = BottomAppBar.FAB_ALIGNMENT_MODE_CENTER
-                    binding.fab.setImageDrawable(
-                        ContextCompat.getDrawable(context, R.drawable.ic_plus)
-                    )
-                    it.replaceMenu(R.menu.menu_bottom_bar)
+                binding.bottomAppBar.apply {
+                    navigationIcon = ContextCompat.getDrawable(context, R.drawable.ic_menu)
+                    fabAlignmentMode = BottomAppBar.FAB_ALIGNMENT_MODE_CENTER
+                    replaceMenu(R.menu.menu_bottom_bar)
+                    if (sharedPref.getSharedPref(HD) == 1) {
+                        menu.findItem(R.id.app_bar_hd).setIcon(R.drawable.ic_hd_colored)
+                    }
                 }
+                requireActivity().supportFragmentManager.popBackStack(
+                    "favorite", FragmentManager.POP_BACK_STACK_INCLUSIVE
+                )
+                binding.fab.setImageDrawable(
+                    ContextCompat.getDrawable(context, R.drawable.ic_favorite)
+                )
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+                bottomSheetBehavior.isHideable = false
             }
         }
+    }
+
+    private fun setSettingsForBottom(context: MainActivity) {
+        binding.bottomAppBar.navigationIcon = null
+        binding.fab.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_back))
+        bottomSheetBehavior.isHideable = true
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
     }
 
     override fun onDestroy() {
