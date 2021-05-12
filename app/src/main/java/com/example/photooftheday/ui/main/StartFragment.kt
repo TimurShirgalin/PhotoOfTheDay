@@ -7,7 +7,6 @@ import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.view.*
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
@@ -28,7 +27,6 @@ class StartFragment : Fragment() {
     private var _binding: MainFragmentMotionBinding? = null
     private val binding get() = _binding!!
 
-    //    private lateinit var bottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>
     private val viewModelPOD: ViewModelPOD by lazy {
         ViewModelProvider(this).get(ViewModelPOD::class.java)
     }
@@ -45,11 +43,9 @@ class StartFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         sharedPref = SharedPref(requireActivity())
-        if (sharedPref.getSharedPref(THEME) != 1) {
-            sharedPref.setSharedPref(
-                THEME, resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-            )
-        }
+        if (sharedPref.getSharedPref(THEME) != 1) sharedPref.setSharedPref(
+            THEME, resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        )
         if (savedInstanceState == null) {
             sharedPref.setSharedPref(HD, 0)
             sharedPref.setSharedPref(DAY, 0)
@@ -82,23 +78,16 @@ class StartFragment : Fragment() {
 
                 val serverResponseData = data.serverResponseData
                 val url: String =
-                    if (sharedPref.getSharedPref(HD) == 1 && data.serverResponseData.media_type == "image") {
-                        serverResponseData.hdurl.toString()
-                    } else {
+                    if (sharedPref.getSharedPref(HD) == 1 && data.serverResponseData.media_type == "image") serverResponseData.hdurl.toString() else {
                         serverResponseData.url.toString()
                     }
-                if (url.isEmpty()) {
-                    Toast.makeText(context, "ссылка пустая!", Toast.LENGTH_LONG).show()
-                } else {
-                    val imageDescription: TextView =
-                        requireActivity().findViewById(R.id.scrolling_textView)
-                    val imageDescriptionHeader: TextView =
-                        requireActivity().findViewById(R.id.label)
-                    imageDescriptionHeader.text = serverResponseData.title
-                    imageDescription.text = serverResponseData.explanation
-                    when (serverResponseData.media_type) {
-                        "image" -> {
-                            binding.motion.apply {
+                if (url.isEmpty()) Toast.makeText(context, "ссылка пустая!", Toast.LENGTH_LONG)
+                    .show() else {
+                    binding.scrolling.apply {
+                        textDescription.text = serverResponseData.explanation
+                        textHeader.text = serverResponseData.title
+                        when (serverResponseData.media_type) {
+                            "image" -> {
                                 webView.visibility = View.GONE
                                 webView.onPause()
                                 imageView.visibility = View.VISIBLE
@@ -107,9 +96,7 @@ class StartFragment : Fragment() {
                                     error(R.drawable.ic_error)
                                 }
                             }
-                        }
-                        "video" -> {
-                            binding.motion.apply {
+                            "video" -> {
                                 imageView.visibility = View.GONE
                                 webView.visibility = View.VISIBLE
                                 webView.settings.javaScriptEnabled = true
@@ -124,7 +111,7 @@ class StartFragment : Fragment() {
             }
             is AppStatePOD.Error -> {
                 binding.loadingLayout.visibility = View.GONE
-                binding.motion.apply {
+                binding.scrolling.apply {
                     webView.visibility = View.GONE
                     imageView.visibility = View.VISIBLE
                     imageView.setImageResource(R.drawable.ic_error)
@@ -157,9 +144,8 @@ class StartFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.menu_bottom_bar, menu)
-        if (sharedPref.getSharedPref(HD) == 1) {
-            menu.findItem(R.id.app_bar_hd).setIcon(R.drawable.ic_hd_colored)
-        }
+        if (sharedPref.getSharedPref(HD) == 1) menu.findItem(R.id.app_bar_hd)
+            .setIcon(R.drawable.ic_hd_colored)
     }
 
     @SuppressLint("CommitPrefEdits")
@@ -200,10 +186,8 @@ class StartFragment : Fragment() {
                 }
                 viewModelPOD.getData(sharedPref.getSharedPref(DAY))
             }
-            R.id.home -> {
-                activity?.let {
-                    BottomSheetDialogFragment().show(it.supportFragmentManager, "tag")
-                }
+            android.R.id.home -> activity?.let {
+                BottomSheetDialogFragment().show(it.supportFragmentManager, "tag")
             }
         }
         return super.onOptionsItemSelected(item)
@@ -213,9 +197,7 @@ class StartFragment : Fragment() {
         val context = activity as MainActivity
         context.setSupportActionBar(view.findViewById(R.id.bottom_appBar))
         setHasOptionsMenu(true)
-        if (!isMain) {
-            setSettingsForBottom(context)
-        }
+        if (!isMain) setSettingsForBottom(context)
         binding.fab.setOnClickListener {
             if (isMain) {
                 isMain = false
@@ -234,16 +216,14 @@ class StartFragment : Fragment() {
                     navigationIcon = ContextCompat.getDrawable(context, R.drawable.ic_menu)
                     fabAlignmentMode = BottomAppBar.FAB_ALIGNMENT_MODE_CENTER
                     replaceMenu(R.menu.menu_bottom_bar)
-                    if (sharedPref.getSharedPref(HD) == 1) {
-                        menu.findItem(R.id.app_bar_hd).setIcon(R.drawable.ic_hd_colored)
-                    }
+                    if (sharedPref.getSharedPref(HD) == 1) menu.findItem(R.id.app_bar_hd)
+                        .setIcon(R.drawable.ic_hd_colored)
                 }
                 requireActivity().supportFragmentManager.popBackStack(
                     "favorite", FragmentManager.POP_BACK_STACK_INCLUSIVE
                 )
-                binding.fab.setImageDrawable(
-                    ContextCompat.getDrawable(context, R.drawable.ic_favorite)
-                )
+                binding.fab.setImageDrawable(ContextCompat.getDrawable(context,
+                    R.drawable.ic_favorite))
             }
         }
     }

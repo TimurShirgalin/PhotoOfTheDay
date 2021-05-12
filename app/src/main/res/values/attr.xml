@@ -5,4 +5,5 @@
     <attr name="background_image" format="reference" />
     <attr name="hd_icon_color" format="reference" />
     <attr name="background_motion_layout" format="reference" />
+    <attr name="background_item_recycler" format="reference" />
 </resources>

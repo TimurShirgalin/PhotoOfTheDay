@@ -18,16 +18,16 @@
 
             <com.google.android.material.appbar.AppBarLayout
                 android:layout_width="match_parent"
-                android:layout_height="500dp"
+                android:layout_height="170dp"
                 android:theme="@style/Theme.PhotoOfTheDay.AppBarOverlay">
 
                 <include
                     android:id="@+id/motion"
-                    layout="@layout/motion_layout" />
+                    layout="@layout/motion_layout_image" />
 
             </com.google.android.material.appbar.AppBarLayout>
 
-            <include layout="@layout/scrolling"
+            <include layout="@layout/fragment_scrolling"
                 android:id="@+id/scrolling"/>
 
             <FrameLayout
