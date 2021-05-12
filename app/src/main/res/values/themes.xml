@@ -19,5 +19,7 @@
         <item name="background_bottomSheet">@color/lightGrey</item>
         <item name="background_image">@color/white</item>
         <item name="hd_icon_color">@color/white</item>
+        <item name="background_motion_layout">@color/lightGrey</item>
+        <item name="background_item_recycler">@color/white</item>
     </style>
 </resources>

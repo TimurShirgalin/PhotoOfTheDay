@@ -14,4 +14,5 @@
     <color name="background_dark">#FFFFFF</color>
     <color name="blue">#104E8B</color>
     <color name="green_cosmic">#3F9A8A</color>
+    <color name="item">?attr/colorOnPrimary</color>
 </resources>
