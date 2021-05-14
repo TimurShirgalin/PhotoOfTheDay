@@ -4,13 +4,18 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat.getFont
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
@@ -60,6 +65,14 @@ class StartFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        SpannableString("NASA: picture if the day").apply {
+            setSpan(ForegroundColorSpan(requireActivity().getColor(R.color.green)), 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            setSpan(ForegroundColorSpan(requireActivity().getColor(R.color.purple_200)), 2, 3, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            setSpan(ForegroundColorSpan(requireActivity().getColor(R.color.blue)), 3, 4, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            binding.motion.label.text = this
+        }
+
         setBottomAppBar(view)
         binding.scrolling.inputLayout.setEndIconOnClickListener {
             startActivity(Intent(Intent.ACTION_VIEW).apply {
@@ -81,11 +94,39 @@ class StartFragment : Fragment() {
                     if (sharedPref.getSharedPref(HD) == 1 && data.serverResponseData.media_type == "image") serverResponseData.hdurl.toString() else {
                         serverResponseData.url.toString()
                     }
+
                 if (url.isEmpty()) Toast.makeText(context, "ссылка пустая!", Toast.LENGTH_LONG)
                     .show() else {
                     binding.scrolling.apply {
+                        if (serverResponseData.title != null) SpannableString(serverResponseData.title).apply {
+                            setSpan(ForegroundColorSpan(requireActivity().getColor(R.color.blue)),
+                                0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                            textHeader.text = this
+                        }
                         textDescription.text = serverResponseData.explanation
-                        textHeader.text = serverResponseData.title
+
+                        var firstSpace = 0
+                        var secondSpace = 0
+                        var thirdSpace = 0
+                        var fourthSpace = 0
+                        var space = 0
+
+                        textHeader.text.forEachIndexed {idx, e ->
+                            if (e.toString() == " ") space += 1
+                            when (space) {
+                                1 -> { if (firstSpace == 0) firstSpace = idx + 1 }
+                                2 -> { if (secondSpace == 0) secondSpace = idx + 1 }
+                                3 -> { if (thirdSpace == 0) thirdSpace = idx + 1 }
+                                4 -> { if (fourthSpace == 0) fourthSpace = idx + 1 }
+                            }
+                        }
+                        SpannableString(textHeader.text).apply {
+                            setSpan(ForegroundColorSpan(requireActivity().getColor(R.color.green)), 0, firstSpace, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                            if (secondSpace != 0) setSpan(ForegroundColorSpan(requireActivity().getColor(R.color.purple_200)), secondSpace, thirdSpace, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                            if (thirdSpace != 0) setSpan(ForegroundColorSpan(requireActivity().getColor(R.color.blue)), thirdSpace, fourthSpace, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                            textHeader.text = this
+                        }
+
                         when (serverResponseData.media_type) {
                             "image" -> {
                                 webView.visibility = View.GONE
@@ -122,6 +163,7 @@ class StartFragment : Fragment() {
 
     private fun setOnClickListenersForChips() {
         for (i in chips.indices) {
+            chips[i].setTypeface(getFont(requireContext(), R.font.willow_body), Typeface.NORMAL)
             chips[i].setOnClickListener {
                 viewModelPOD.getData(i)
                 sharedPref.setSharedPref(DAY, i)
@@ -132,7 +174,10 @@ class StartFragment : Fragment() {
 
     private fun chipsCheck(day: Int) {
         for (i in chips.indices) {
-            chips[i].isChecked = i == day
+            chips[i].isChecked = i == day.also {
+                chips[i].setTypeface(getFont(requireContext(), R.font.willow_body), Typeface.NORMAL)
+                chips[it].setTypeface(getFont(requireContext(), R.font.willow_body), Typeface.ITALIC)
+            }
         }
     }
 
