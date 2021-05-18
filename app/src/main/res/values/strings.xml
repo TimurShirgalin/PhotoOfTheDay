@@ -1,3 +1,25 @@
 <resources>
     <string name="app_name">Photo of the day</string>
+    <string name="photo_of_the_day_disc">photo_of_the_day_disc</string>
+    <string name="input_hint">Введите запрос</string>
+    <string name="helper_text">Поиск в Википедии</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="chip_text_yesterday">Вчера</string>
+    <string name="chip_text_today">Сегодня</string>
+    <string name="chip_text_dayBeforeYesterday">Позавчера</string>
+    <string name="menu_title_favorite">Favorite</string>
+    <string name="menu_title_settings">Settings</string>
+    <string name="menu_title_view1">На экран 1</string>
+    <string name="menu_title_view2">На экран 2</string>
+    <string name="menu_title_search">Search</string>
+    <string name="title_activity_api">ApiActivity</string>
+    <!--
+    This string is used for square devices and overridden by hello_world in
+    values-round/strings.xml for round devices.
+    -->
+    <string name="hello_world">Hello Square World!</string>
+    <string name="menu_title_hd">menu_title_hd</string>
+    <string name="large_text">Общество всемирных межбанковских финансовых каналов связи (от англ. Society for Worldwide Interbank Financial Telecommunications (SWIFT), произносится как СВИФТ) — международная межбанковская система передачи информации и совершения платежей. Данная система позволяет финансовым учреждениям во всем мире отправлять и получать информацию о финансовых операциях в безопасной, стандартизированной и надежной форме. Основано в 1973; соучредителями выступили 248 банков из 19 стран. Штаб-квартира SWIFT находится в Бельгии, недалеко от Брюсселя. SWIFT является кооперативным обществом, созданным по бельгийскому законодательству, принадлежит его членам. По состоянию на 2015 год членами SWIFT являются более 11 тыс. финансовых организаций в более чем 200 странах мира, в том числе около 1000 корпораций. Средний оборот — более 30 миллионов сообщений в день. Адресация абонентов в системе основана на так называемом BIC (англ. Business Identifier Code, ранее известном как Bank Identifier Code), присваиваемом в соответствии с международным стандартом ISO 9362. Также иногда именуется SWIFT-BIC, SWIFT ID или SWIFT code. На практике для совершения платежа в Европе достаточно знать наименование и IBAN-код банковского счета получателя (уже содержащий интерпретированный BIC в своём составе).</string>
+    <string name="text_app_label">NASA: picture if the day</string>
 </resources>

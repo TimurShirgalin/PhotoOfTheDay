@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.example.photooftheday.ui.main.CollapsibleToolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/motion_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="false"
+    android:background="?attr/colorOnPrimary"
+    android:minHeight="100dp"
+    app:layoutDescription="@xml/motion_scene"
+    app:layout_scrollFlags="scroll|enterAlways|snap|exitUntilCollapsed">
+
+    <FrameLayout
+        android:id="@+id/media"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <com.example.photooftheday.ui.main.EquilateralImageView
+            android:id="@+id/image_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/photo_of_the_day_disc"
+            android:scaleType="fitCenter"
+            android:visibility="gone" />
+
+        <WebView
+            android:id="@+id/webView"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/webView_height"
+            android:visibility="gone" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="text"
+        android:textSize="28sp"
+        android:transformPivotX="0dp"
+        android:transformPivotY="0dp" />
+
+    <include
+        android:id="@+id/chips_layout_new"
+        layout="@layout/fragment_chips" />
+
+</com.example.photooftheday.ui.main.CollapsibleToolbar>
