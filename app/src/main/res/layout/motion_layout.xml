@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.example.photooftheday.ui.main.CollapsibleToolbar xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/motion_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="false"
-    android:background="?attr/background_motion_layout"
+    android:background="?attr/colorOnPrimary"
     android:minHeight="100dp"
     app:layoutDescription="@xml/motion_scene"
     app:layout_scrollFlags="scroll|enterAlways|snap|exitUntilCollapsed">
@@ -35,8 +36,7 @@
         android:id="@+id/label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="text"
-        android:textColor="?attr/colorOnSecondary"
+        tools:text="text"
         android:textSize="28sp"
         android:transformPivotX="0dp"
         android:transformPivotY="0dp" />

@@ -10,7 +10,7 @@ import com.example.photooftheday.THEME
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val sharedPref = SharedPref(this)
+        val sharedPref = SharedPref(this@MainActivity)
         if (sharedPref.getSharedPref(THEME) == 1) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             setTheme(R.style.Theme_Cosmic)

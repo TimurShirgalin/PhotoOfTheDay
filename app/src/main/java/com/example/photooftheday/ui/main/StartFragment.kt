@@ -17,7 +17,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat.getFont
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import coil.load
 import com.example.photooftheday.*
@@ -27,6 +26,8 @@ import com.example.photooftheday.ui.secondary.FavoriteFragment
 import com.example.photooftheday.viewModel.ViewModelPOD
 import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.chip.Chip
+
+var isMain = true
 
 class StartFragment : Fragment() {
     private var _binding: MainFragmentMotionBinding? = null
@@ -122,8 +123,8 @@ class StartFragment : Fragment() {
                         }
                         SpannableString(textHeader.text).apply {
                             setSpan(ForegroundColorSpan(requireActivity().getColor(R.color.green)), 0, firstSpace, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                            if (secondSpace != 0) setSpan(ForegroundColorSpan(requireActivity().getColor(R.color.purple_200)), secondSpace, thirdSpace, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                            if (thirdSpace != 0) setSpan(ForegroundColorSpan(requireActivity().getColor(R.color.blue)), thirdSpace, fourthSpace, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                            if (thirdSpace != 0) setSpan(ForegroundColorSpan(requireActivity().getColor(R.color.purple_200)), secondSpace, thirdSpace, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                            if (fourthSpace != 0) setSpan(ForegroundColorSpan(requireActivity().getColor(R.color.blue)), thirdSpace, fourthSpace, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                             textHeader.text = this
                         }
 
@@ -183,7 +184,7 @@ class StartFragment : Fragment() {
 
     companion object {
         fun newInstance() = StartFragment()
-        private var isMain = true
+//        private var isMain = true
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -191,6 +192,7 @@ class StartFragment : Fragment() {
         inflater.inflate(R.menu.menu_bottom_bar, menu)
         if (sharedPref.getSharedPref(HD) == 1) menu.findItem(R.id.app_bar_hd)
             .setIcon(R.drawable.ic_hd_colored)
+        if (!isMain) binding.bottomAppBar.menu.findItem(R.id.app_bar_hd).isVisible = false
     }
 
     @SuppressLint("CommitPrefEdits")
@@ -244,36 +246,43 @@ class StartFragment : Fragment() {
         setHasOptionsMenu(true)
         if (!isMain) setSettingsForBottom(context)
         binding.fab.setOnClickListener {
-            if (isMain) {
-                isMain = false
-                setSettingsForBottom(context)
-                binding.bottomAppBar.apply {
-                    fabAlignmentMode = BottomAppBar.FAB_ALIGNMENT_MODE_END
-                    menu.findItem(R.id.app_bar_hd).isVisible = false
-                }
-                requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.container_favorite, FavoriteFragment.newInstance(), "favorite")
-                    .addToBackStack("favorite")
-                    .commit()
-            } else {
-                isMain = true
-                binding.bottomAppBar.apply {
-                    navigationIcon = ContextCompat.getDrawable(context, R.drawable.ic_menu)
-                    fabAlignmentMode = BottomAppBar.FAB_ALIGNMENT_MODE_CENTER
-                    replaceMenu(R.menu.menu_bottom_bar)
-                    if (sharedPref.getSharedPref(HD) == 1) menu.findItem(R.id.app_bar_hd)
-                        .setIcon(R.drawable.ic_hd_colored)
-                }
-                requireActivity().supportFragmentManager.popBackStack(
-                    "favorite", FragmentManager.POP_BACK_STACK_INCLUSIVE
-                )
-                binding.fab.setImageDrawable(ContextCompat.getDrawable(context,
-                    R.drawable.ic_favorite))
+            setFabAction(context, FavoriteFragment.newInstance())
+        }
+    }
+
+    private fun setFabAction(context: MainActivity, newInstance: Fragment) {
+        if (isMain) {
+            isMain = false
+            setSettingsForBottom(context)
+            binding.bottomAppBar.apply {
+                fabAlignmentMode = BottomAppBar.FAB_ALIGNMENT_MODE_END
+                menu.findItem(R.id.app_bar_hd).isVisible = false
             }
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.container_favorite, newInstance, "favorite")
+                .addToBackStack("favorite")
+                .commit()
+        } else {
+            isMain = true
+            binding.bottomAppBar.apply {
+                navigationIcon = ContextCompat.getDrawable(context, R.drawable.ic_menu)
+                fabAlignmentMode = BottomAppBar.FAB_ALIGNMENT_MODE_CENTER
+                replaceMenu(R.menu.menu_bottom_bar)
+                if (sharedPref.getSharedPref(HD) == 1) menu.findItem(R.id.app_bar_hd)
+                    .setIcon(R.drawable.ic_hd_colored)
+            }
+            requireActivity().onBackPressed()
+            binding.fab.setImageDrawable(
+                ContextCompat.getDrawable(
+                    context,
+                    R.drawable.ic_favorite
+                )
+            )
         }
     }
 
     private fun setSettingsForBottom(context: MainActivity) {
+//        binding.bottomAppBar.menu.findItem(R.id.app_bar_hd).isVisible = false
         binding.bottomAppBar.navigationIcon = null
         binding.fab.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_back))
     }

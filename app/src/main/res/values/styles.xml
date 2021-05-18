@@ -30,8 +30,8 @@
 
     <style name="CustomChips" parent="Widget.MaterialComponents.Chip.Choice">
         <item name="android:backgroundTint">@color/chips_colors</item>
-        <item name="chipSurfaceColor">@color/white</item>
-        <item name="rippleColor">?attr/colorPrimaryVariant</item>
+        <item name="chipSurfaceColor">@color/purple_200</item>
+        <item name="rippleColor">?attr/colorSecondaryVariant</item>
     </style>
 
     <style name="CustomEquilateralImageView">
